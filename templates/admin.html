@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Painel administrativo</h2>
+
+<h3>Usuários</h3>
+<table>
+  <thead>
+    <tr><th>Email</th><th>Salt</th><th>Hash</th></tr>
+  </thead>
+  <tbody>
+    {% for u in users %}
+    <tr>
+      <td>{{ u.email }}</td>
+      <td><code>{{ u.salt }}</code></td>
+      <td><code>{{ u.hash_preview }}</code></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h3>Sessões</h3>
+<table>
+  <thead>
+    <tr><th>Session ID</th><th>Email</th><th>Criado em</th><th>Views</th></tr>
+  </thead>
+  <tbody>
+    {% for s in sessions %}
+    <tr>
+      <td><code>{{ s.session_id }}</code></td>
+      <td>{{ s.email }}</td>
+      <td>{{ s.created_at }}</td>
+      <td>{{ s.views }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

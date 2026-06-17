@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+{% if user_email %}
+  <p>Você está autenticado como {{ user_email }}</p>
+{% else %}
+  <p>Crie uma conta ou faça login para acessar as áreas protegidas.</p>
+{% endif %}
+{% endblock %}
