@@ -8,9 +8,7 @@ import database
 import sessions
 
 _jinja_env = Environment(
-    loader=FileSystemLoader(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
-    )
+    loader=FileSystemLoader(os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates"))
 )
 
 
@@ -30,10 +28,7 @@ def _html(start_response, status: str, body: bytes, extra_headers: list | None =
 
 
 def _read_post_body(environ) -> dict[str, list[str]]:
-    try:
-        length = int(environ.get("CONTENT_LENGTH") or 0)
-    except ValueError:
-        length = 0
+    length = int(environ.get("CONTENT_LENGTH") or 0)
     if length <= 0:
         return {}
     return parse_qs(environ["wsgi.input"].read(length).decode("utf-8"))
@@ -98,11 +93,14 @@ def post_login(environ, start_response):
 
     session_id = sessions.create_session(email)
     cookie = f"sessionId={session_id}; HttpOnly; Path=/; SameSite=Strict"
-    start_response("302 Found", [
-        ("Location", "/dashboard"),
-        ("Set-Cookie", cookie),
-        ("Content-Length", "0"),
-    ])
+    start_response(
+        "302 Found",
+        [
+            ("Location", "/dashboard"),
+            ("Set-Cookie", cookie),
+            ("Content-Length", "0"),
+        ],
+    )
     return [b""]
 
 

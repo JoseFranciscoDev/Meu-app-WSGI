@@ -1,29 +1,66 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="utf-8">
   <title>Webdev Cookie</title>
   <style>
-    body { font-family: sans-serif; max-width: 680px; margin: 2rem auto; padding: 0 1rem; }
-    nav a { margin-right: 1rem; }
-    input { display: block; margin: .4rem 0; padding: .4rem; width: 100%; box-sizing: border-box; }
-    button { padding: .4rem 1rem; cursor: pointer; margin-top: .5rem; }
-    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
-    th, td { border: 1px solid #ccc; padding: .3rem .6rem; text-align: left; word-break: break-all; }
-    th { background: #f4f4f4; }
+    body {
+      font-family: sans-serif;
+      max-width: 680px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    nav a {
+      margin-right: 1rem;
+    }
+
+    input {
+      display: block;
+      margin: .4rem 0;
+      padding: .4rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: .4rem 1rem;
+      cursor: pointer;
+      margin-top: .5rem;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: .3rem .6rem;
+      text-align: left;
+      word-break: break-all;
+    }
+
+    th {
+      background: #f4f4f4;
+    }
   </style>
 </head>
+
 <body>
   <header>
     <h1>Webdev Cookie</h1>
     <nav>
       {% if user_email %}
-        <a href="/dashboard">Dashboard</a>
-        <a href="/admin">Admin</a>
-        <a href="/logout">Logout</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/admin">Admin</a>
+      <a href="/logout">Logout</a>
       {% else %}
-        <a href="/register">Criar conta</a>
-        <a href="/login">Fazer login</a>
+      <a href="/register">Criar conta</a>
+      <a href="/login">Fazer login</a>
       {% endif %}
     </nav>
   </header>
@@ -31,4 +68,5 @@
     {% block content %}{% endblock %}
   </main>
 </body>
+
 </html>
