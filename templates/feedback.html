@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="alert alert-{{ alert_type }}" role="alert">
+  <h4 class="alert-heading">{{ heading }}</h4>
+  <p class="mb-0">{{ message }}</p>
+</div>
+<div class="d-flex gap-2 mt-3">
+  {% for action in actions %}
+  <a href="{{ action.href }}" class="btn {{ action.variant }}">{{ action.label }}</a>
+  {% endfor %}
+</div>
+{% endblock %}

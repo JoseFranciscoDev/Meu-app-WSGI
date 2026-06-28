@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Dashboard</h2>
-<p>Bem-vindo, {{ user_email }}</p>
-<a href="/logout">Encerrar sessão</a>
+<p class="lead">Bem-vindo, {{ user_email }}</p>
+<a href="/logout" class="btn btn-outline-danger btn-sm">Encerrar sessão</a>
 {% endblock %}

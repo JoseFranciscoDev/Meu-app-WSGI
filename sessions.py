@@ -26,7 +26,7 @@ def get_session(session_id: str) -> dict | None:
     return session
 
 
-def delete_session(session_id: str) -> None:
+def delete_session(session_id: str | None) -> None:
     database.sessions.pop(session_id, None)
 
 

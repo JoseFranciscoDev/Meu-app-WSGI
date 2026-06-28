@@ -1,21 +1,20 @@
-from controllers import (
-    get_home_page,
-    get_register_page,
-    post_register,
-    get_login_page,
-    post_login,
-    get_dashboard,
-    get_admin,
-    get_logout,
-)
+from typing import Callable
 
-rotas = {
-    ("GET",  "/"):          get_home_page,
-    ("GET",  "/register"):  get_register_page,
-    ("POST", "/register"):  post_register,
-    ("GET",  "/login"):     get_login_page,
-    ("POST", "/login"):     post_login,
-    ("GET",  "/dashboard"): get_dashboard,
-    ("GET",  "/admin"):     get_admin,
-    ("GET",  "/logout"):    get_logout,
-}
+
+class Router:
+    def __init__(self):
+        self.routes: dict[tuple, Callable] = {}
+
+    def get(self, path: str):
+        def wrapper(func: Callable) -> Callable:
+            self.routes[("GET", path)] = func
+            return func
+
+        return wrapper
+
+    def post(self, path: str):
+        def wrapper(func: Callable) -> Callable:
+            self.routes[("POST", path)] = func
+            return func
+
+        return wrapper
