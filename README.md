@@ -10,8 +10,6 @@ Aplicação web WSGI construída em Python puro, sem frameworks externos. Demons
 | Roteamento | `Router` customizado (`router.py`) |
 | Hashing | PBKDF2 + SHA-512 + salt aleatório |
 | Sessões | Dicionário em memória + cookie `sessionId` |
-| Testes E2E | Node.js (fetch nativo + `node:assert`) |
-| Especificações | Gherkin / BDD em português |
 
 ## Features
 
@@ -39,9 +37,6 @@ Aplicação web WSGI construída em Python puro, sem frameworks externos. Demons
 ## Como rodar
 
 ```bash
-# Inicia o servidor (padrão: localhost:8080)
-npm start
+# Inicia o servidor (passando o host e a porta)
+python main.py 0.0.0.0 8080
 
-# Executa os testes E2E (servidor deve estar rodando)
-npm run test:e2e
-```
