@@ -26,6 +26,12 @@ def get_session(session_id: str) -> dict | None:
     return session
 
 
+def increment_views(session_id: str) -> None:
+    session = database.sessions.get(session_id)
+    if session is not None:
+        session["views"] += 1
+
+
 def delete_session(session_id: str | None) -> None:
     database.sessions.pop(session_id, None)
 

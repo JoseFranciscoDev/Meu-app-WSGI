@@ -1,7 +1,7 @@
 import auth
 import database
 import sessions
-from rotas import Router
+from router import Router
 from utils import (
     _first,
     _html,
@@ -9,11 +9,12 @@ from utils import (
     _render,
 )
 from wsgiref.types import StartResponse, WSGIEnvironment
+from typing import Iterable
 
 router = Router()
 
 
-def unauthorized_page(environ: WSGIEnvironment, start_response: StartResponse) -> list[bytes]:
+def unauthorized_page(environ: WSGIEnvironment, start_response: StartResponse) -> Iterable[bytes]:
     body = _render(
         "feedback.html",
         user_email=None,
@@ -28,7 +29,7 @@ def unauthorized_page(environ: WSGIEnvironment, start_response: StartResponse) -
     return _html(start_response, "401 Unauthorized", body)
 
 
-def not_found_page(environ: WSGIEnvironment, start_response: StartResponse) -> list[bytes]:
+def not_found_page(environ: WSGIEnvironment, start_response: StartResponse) -> Iterable[bytes]:
     body = _render(
         "feedback.html",
         user_email=None,
@@ -41,14 +42,14 @@ def not_found_page(environ: WSGIEnvironment, start_response: StartResponse) -> l
 
 
 @router.get("/")
-def get_home_page(environ: WSGIEnvironment, start_response: StartResponse) -> list[bytes]:
+def get_home_page(environ: WSGIEnvironment, start_response: StartResponse) -> Iterable[bytes]:
     email = sessions.get_authenticated_email(environ)
     body = _render("home.html", user_email=email)
     return _html(start_response, "200 OK", body)
 
 
 @router.get("/register")
-def get_register_page(environ: WSGIEnvironment, start_response: StartResponse) -> list[bytes]:
+def get_register_page(environ: WSGIEnvironment, start_response: StartResponse) -> Iterable[bytes]:
     body = _render(
         "auth_form.html",
         user_email=None,
@@ -61,7 +62,7 @@ def get_register_page(environ: WSGIEnvironment, start_response: StartResponse) -
 
 
 @router.post("/register")
-def post_register(environ: WSGIEnvironment, start_response: StartResponse) -> list[bytes]:
+def post_register(environ: WSGIEnvironment, start_response: StartResponse) -> Iterable[bytes]:
     form = _read_post_body(environ)
     email = _first(form, "email")
     password = _first(form, "password")
@@ -96,7 +97,7 @@ def post_register(environ: WSGIEnvironment, start_response: StartResponse) -> li
 
 
 @router.get("/login")
-def get_login_page(environ: WSGIEnvironment, start_response: StartResponse) -> list[bytes]:
+def get_login_page(environ: WSGIEnvironment, start_response: StartResponse) -> Iterable[bytes]:
     body = _render(
         "auth_form.html",
         user_email=None,
@@ -108,13 +109,24 @@ def get_login_page(environ: WSGIEnvironment, start_response: StartResponse) -> l
 
 
 @router.post("/login")
-def post_login(environ: WSGIEnvironment, start_response: StartResponse) -> list[bytes]:
+def post_login(environ: WSGIEnvironment, start_response: StartResponse) -> Iterable[bytes]:
     form = _read_post_body(environ)
     email = _first(form, "email")
     password = _first(form, "password")
 
     user = database.users.get(email)
-    if user is None or not auth.verify_password(password, user["salt"], user["password_hash"]):
+    if user is None:
+        body = _render(
+            "feedback.html",
+            user_email=None,
+            alert_type="danger",
+            heading="Login inválido",
+            message="As credenciais informadas não conferem.",
+            actions=[{"href": "/login", "label": "Tentar novamente", "variant": "btn-primary"}],
+        )
+        return _html(start_response, "401 Unauthorized", body)
+
+    if not auth.verify_password(password, user["salt"], user["password_hash"]):
         body = _render(
             "feedback.html",
             user_email=None,
@@ -139,16 +151,18 @@ def post_login(environ: WSGIEnvironment, start_response: StartResponse) -> list[
 
 
 @router.get("/dashboard")
-def get_dashboard(environ: WSGIEnvironment, start_response: StartResponse) -> list[bytes]:
+def get_dashboard(environ: WSGIEnvironment, start_response: StartResponse) -> Iterable[bytes]:
+    session_id = sessions.get_session_id_from_environ(environ)
     email = sessions.get_authenticated_email(environ)
     if email is None:
         return unauthorized_page(environ, start_response)
+    sessions.increment_views(session_id)
     body = _render("dashboard.html", user_email=email)
     return _html(start_response, "200 OK", body)
 
 
 @router.get("/admin")
-def get_admin(environ: WSGIEnvironment, start_response: StartResponse) -> list[bytes]:
+def get_admin(environ: WSGIEnvironment, start_response: StartResponse) -> Iterable[bytes]:
     email = sessions.get_authenticated_email(environ)
     if email is None:
         return unauthorized_page(environ, start_response)
@@ -177,7 +191,7 @@ def get_admin(environ: WSGIEnvironment, start_response: StartResponse) -> list[b
 
 
 @router.get("/logout")
-def get_logout(environ: WSGIEnvironment, start_response: StartResponse) -> list[bytes]:
+def get_logout(environ: WSGIEnvironment, start_response: StartResponse) -> Iterable[bytes]:
     session_id = sessions.get_session_id_from_environ(environ)
     session = sessions.get_session(session_id) if session_id else None
     if session is None:

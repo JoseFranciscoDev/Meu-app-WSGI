@@ -1,6 +1,8 @@
 from urllib.parse import parse_qs
 import os
 from jinja2 import Environment, FileSystemLoader
+from typing import Iterable
+
 
 jinja_env = Environment(
     loader=FileSystemLoader(os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates"))
@@ -11,7 +13,9 @@ def _render(template_name: str, **ctx) -> bytes:
     return jinja_env.get_template(template_name).render(**ctx).encode()
 
 
-def _html(start_response, status: str, body: bytes, extra_headers: list | None = None) -> list:
+def _html(
+    start_response, status: str, body: bytes, extra_headers: list | None = None
+) -> Iterable[bytes]:
     headers = [
         ("Content-Type", "text/html; charset=utf-8"),
         ("Content-Length", str(len(body))),
